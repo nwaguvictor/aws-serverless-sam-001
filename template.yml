@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM application
+
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 30
+    MemorySize: 1024
+    CodeUri: ./
+    Architectures:
+        - x86_64
+
+Resources:
+  CreateCustomer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/customers/create.handler
+      Description: Create Customer Function
+      Events:
+        CreateCustomerEvent:
+          Type: Api
+          Properties:
+            Path: /v1/customers
+            Method: POST
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomerTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref CustomerTable
+          REGION: AWS::Region
+
+  CustomerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: customers
+      AttributeDefinitions:
+        - AttributeName: customer_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: customer_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE

@@ -1,0 +1,11 @@
+{
+  "name": "sam-serverless",
+  "version": "1.0.0",
+  "description": "sam serverless application",
+  "main": "index.js",
+  "author": "nwaguvictor",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
+}
